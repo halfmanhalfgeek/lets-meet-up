@@ -1,10 +1,11 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { Users, Calendar, Settings, LogOut, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { useAuth } from '@/contexts/auth-context'
 
 interface MainLayoutProps {
   children: React.ReactNode
@@ -18,6 +19,8 @@ const navigation = [
 
 export function MainLayout({ children }: MainLayoutProps) {
   const pathname = usePathname()
+  const router = useRouter()
+  const { signOut } = useAuth()
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -80,7 +83,14 @@ export function MainLayout({ children }: MainLayoutProps) {
                 </Button>
                 
                 <div className="mt-6 pt-6 border-t border-gray-200">
-                  <Button variant="ghost" className="w-full justify-start text-gray-600">
+                  <Button 
+                    variant="ghost" 
+                    className="w-full justify-start text-gray-600"
+                    onClick={async () => {
+                      await signOut()
+                      router.push('/')
+                    }}
+                  >
                     <LogOut className="h-4 w-4 mr-2" />
                     Sign Out
                   </Button>

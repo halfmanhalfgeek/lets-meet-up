@@ -21,8 +21,8 @@ const features = [
   },
   {
     icon: Users,
-    title: 'Group Management',
-    description: 'Easily create and manage groups with simple invite links.'
+    title: 'Private Groups',
+    description: 'Create invite-only groups and manage your close friends and colleagues.'
   }
 ]
 

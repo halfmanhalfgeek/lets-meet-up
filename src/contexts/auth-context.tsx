@@ -40,6 +40,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const supabase = createClient()
 
   useEffect(() => {
+    // Only run on client side
+    if (typeof window === 'undefined') {
+      setLoading(false)
+      return
+    }
+
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null)

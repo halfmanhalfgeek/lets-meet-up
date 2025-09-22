@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/auth-context'
 import { MainLayout } from '@/components/layout/main-layout'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Plus, Calendar, Users, MapPin } from 'lucide-react'
+import { Plus, Calendar, Users, UserPlus } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 
@@ -44,7 +44,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <Card className="hover:shadow-md transition-shadow cursor-pointer">
             <CardHeader className="text-center pb-3">
               <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-3">
@@ -82,33 +82,16 @@ export default function DashboardPage() {
           <Card className="hover:shadow-md transition-shadow cursor-pointer">
             <CardHeader className="text-center pb-3">
               <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                <Calendar className="w-6 h-6 text-purple-600" />
+                <UserPlus className="w-6 h-6 text-purple-600" />
               </div>
-              <CardTitle className="text-lg">Join Event</CardTitle>
+              <CardTitle className="text-lg">Join Group</CardTitle>
             </CardHeader>
             <CardContent className="text-center">
               <CardDescription className="mb-4">
-                Have an invite link? Join an existing event
+                Have an invite link? Join a private group
               </CardDescription>
               <Button variant="outline" className="w-full" size="sm">
-                Join Event
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card className="hover:shadow-md transition-shadow cursor-pointer">
-            <CardHeader className="text-center pb-3">
-              <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                <MapPin className="w-6 h-6 text-orange-600" />
-              </div>
-              <CardTitle className="text-lg">Browse Groups</CardTitle>
-            </CardHeader>
-            <CardContent className="text-center">
-              <CardDescription className="mb-4">
-                Discover and join groups in your area
-              </CardDescription>
-              <Button variant="outline" className="w-full" size="sm">
-                Browse
+                Enter Invite Code
               </Button>
             </CardContent>
           </Card>
@@ -146,7 +129,7 @@ export default function DashboardPage() {
                 <div className="text-center py-8 text-gray-500">
                   <Users className="w-12 h-12 mx-auto mb-4 text-gray-300" />
                   <p>No groups yet</p>
-                  <p className="text-sm">Create or join a group to start coordinating!</p>
+                  <p className="text-sm">Create a group or ask a friend for an invite code!</p>
                 </div>
               </div>
             </CardContent>
