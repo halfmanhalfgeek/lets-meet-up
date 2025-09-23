@@ -14,7 +14,7 @@ interface MainLayoutProps {
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: Calendar },
   { name: 'Groups', href: '/groups', icon: Users },
-  { name: 'Settings', href: '/settings', icon: Settings },
+  { name: 'Settings', href: '/dashboard/settings', icon: Settings },
 ]
 
 export function MainLayout({ children }: MainLayoutProps) {
