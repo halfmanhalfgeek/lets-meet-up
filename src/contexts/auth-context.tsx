@@ -11,6 +11,7 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<{ error: AuthError | null }>
   signOut: () => Promise<{ error: AuthError | null }>
   signInWithProvider: (provider: 'google' | 'github') => Promise<{ error: AuthError | null }>
+  changePassword: (newPassword: string) => Promise<{ error: AuthError | null }>
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -20,6 +21,7 @@ const AuthContext = createContext<AuthContextType>({
   signIn: async () => ({ error: null }),
   signOut: async () => ({ error: null }),
   signInWithProvider: async () => ({ error: null }),
+  changePassword: async () => ({ error: null }),
 })
 
 export const useAuth = () => {
@@ -97,6 +99,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
     return { error }
   }
 
+  const changePassword = async (newPassword: string) => {
+    const { error } = await supabase.auth.updateUser({
+      password: newPassword
+    })
+    return { error }
+  }
+
   const value = {
     user,
     loading,
@@ -104,6 +113,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     signIn,
     signOut,
     signInWithProvider,
+    changePassword,
   }
 
   return (

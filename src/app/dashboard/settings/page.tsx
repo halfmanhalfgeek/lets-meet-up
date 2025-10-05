@@ -9,8 +9,9 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
-import { MapPin, Bell, Shield, Heart, Activity } from 'lucide-react'
+import { MapPin, Bell, Shield, Heart, Activity, Key } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 // Types are inferred from Supabase client
 
 // Predefined options for interests
@@ -30,11 +31,20 @@ const ACCESSIBILITY_NEEDS = [
 ]
 
 export default function SettingsPage() {
-  const { user, loading } = useAuth()
+  const { user, loading, changePassword } = useAuth()
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
+  const [isChangingPassword, setIsChangingPassword] = useState(false)
   
   const supabase = createClient()
+
+  // Password change form state
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  })
+  const [passwordMessage, setPasswordMessage] = useState<{type: 'success' | 'error', text: string} | null>(null)
 
   // Form state
   const [formData, setFormData] = useState({
@@ -176,6 +186,43 @@ export default function SettingsPage() {
     }
   }
 
+  const handlePasswordChange = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setPasswordMessage(null)
+
+    // Validation
+    if (!passwordData.newPassword || !passwordData.confirmPassword) {
+      setPasswordMessage({ type: 'error', text: 'Please fill in all required fields.' })
+      return
+    }
+
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      setPasswordMessage({ type: 'error', text: 'New passwords do not match.' })
+      return
+    }
+
+    if (passwordData.newPassword.length < 6) {
+      setPasswordMessage({ type: 'error', text: 'New password must be at least 6 characters long.' })
+      return
+    }
+
+    try {
+      setIsChangingPassword(true)
+      const { error } = await changePassword(passwordData.newPassword)
+      
+      if (error) {
+        setPasswordMessage({ type: 'error', text: error.message })
+      } else {
+        setPasswordMessage({ type: 'success', text: 'Password changed successfully!' })
+        setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' })
+      }
+    } catch (error) {
+      setPasswordMessage({ type: 'error', text: 'An unexpected error occurred. Please try again.' })
+    } finally {
+      setIsChangingPassword(false)
+    }
+  }
+
   if (loading || isLoading) {
     return (
       <MainLayout>
@@ -288,6 +335,65 @@ export default function SettingsPage() {
                   <option value="none" className="text-gray-900">Private</option>
                 </Select>
               </div>
+            </CardContent>
+          </Card>
+
+          {/* Account Security */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center space-x-2">
+                <Key className="w-5 h-5 text-blue-600" />
+                <CardTitle>Account Security</CardTitle>
+              </div>
+              <CardDescription>
+                Change your password to keep your account secure
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handlePasswordChange} className="space-y-4">
+                {passwordMessage && (
+                  <Alert className={passwordMessage.type === 'error' ? 'border-red-200 bg-red-50' : 'border-green-200 bg-green-50'}>
+                    <AlertDescription className={passwordMessage.type === 'error' ? 'text-red-800' : 'text-green-800'}>
+                      {passwordMessage.text}
+                    </AlertDescription>
+                  </Alert>
+                )}
+                
+                <div>
+                  <Label htmlFor="newPassword">New Password</Label>
+                  <Input
+                    id="newPassword"
+                    type="password"
+                    value={passwordData.newPassword}
+                    onChange={(e) => setPasswordData(prev => ({ ...prev, newPassword: e.target.value }))}
+                    placeholder="Enter new password"
+                    required
+                  />
+                  <p className="text-xs text-gray-600 mt-1">
+                    Password must be at least 6 characters long
+                  </p>
+                </div>
+                
+                <div>
+                  <Label htmlFor="confirmPassword">Confirm New Password</Label>
+                  <Input
+                    id="confirmPassword"
+                    type="password"
+                    value={passwordData.confirmPassword}
+                    onChange={(e) => setPasswordData(prev => ({ ...prev, confirmPassword: e.target.value }))}
+                    placeholder="Confirm new password"
+                    required
+                  />
+                </div>
+                
+                <Button 
+                  type="submit" 
+                  disabled={isChangingPassword}
+                  className="w-full"
+                >
+                  {isChangingPassword ? 'Changing Password...' : 'Change Password'}
+                </Button>
+              </form>
             </CardContent>
           </Card>
 
